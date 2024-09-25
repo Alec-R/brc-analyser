@@ -7,7 +7,7 @@ FIELDS = [
     'trailingPE', # Price to earnings ratio
     'trailingEps', # current earnings per share
     'forwardEps', # projected earnings per share
-    'pegRatio' # pe growth using pe and eps
+    'pegRatio', # pe growth using pe and eps
 
     'dividendYield', # dividend yield
     'targetMeanPrice', # target price consensus
@@ -23,7 +23,7 @@ FIELDS = [
     'earningsQuarterlyGrowth', # earnings: beat/miss
     'shortRatio', # short ratio
     'payoutRatio', # Dividend payout ratio
-    'beta' # beta
+    'beta', # beta
 ]
 
 PCT_FIELDS = [
@@ -34,7 +34,7 @@ PCT_FIELDS = [
     'returnOnEquity', # return on equity
     'returnOnAssets', # return on assets
     'earningsQuarterlyGrowth', # earnings: beat/miss
-    'payoutRatio' # Dividend payout ratio
+    'payoutRatio', # Dividend payout ratio
 
     ## calculated
     # ...
@@ -46,10 +46,11 @@ LARGE_INTS = [
 
 
 basics = [
+    'Ticker',
     'currentPrice', # last price
     'trailingPE', # Price to earnings ratio
     'trailingEps', # current earnings per share
-    'pegRatio' # pe growth using pe and eps
+    'pegRatio', # pe growth using pe and eps
 ]
 
 basics_comparison =[
@@ -63,14 +64,13 @@ fwd_data = [
     'earningsQuarterlyGrowth', # earnings: beat/miss
     'forwardEps', # projected earnings per share
     'targetMeanPrice', # target price consensus
-    'pegRatio', # pe growth using pe and eps
-    'projected_eps_growth' # projected eps growth
+    'projected_eps_growth', # projected eps growth
     'price_to_targetprice'
 ]
 
 stock_data = [
     'shortRatio', # short ratio
-    'beta' # beta
+    'beta', # beta
 ]
 
 financials = [

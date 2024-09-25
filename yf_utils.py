@@ -2,6 +2,7 @@ import yfinance as yf
 import pandas as pd
 import yf_config
 
+# handle config ==================
 def is_valid_number(x) -> bool :
     """Check if x is a number (not 'N/A' or None)."""
     return x != 'N/A' and x is not None
@@ -22,6 +23,25 @@ def get_largenum_fields() -> list :
     """Read fields from config file."""
     return yf_config.LARGE_INTS
 
+def get_sectionfields():
+    """
+    Supported tabs:
+    "Overview", "Fundamentals", "Forward View"
+    """
+    basics = yf_config.basics
+    overview = basics + yf_config.basics_comparison + yf_config.stock_data 
+    fundamentals = basics + yf_config.financials
+    forward_view = basics + yf_config.fwd_data
+    
+    fieldlist = {
+        "Overview": overview,
+        "Fundamentals": fundamentals,
+        "Forward View": forward_view
+    }
+    return fieldlist
+
+
+# data ==================
 def fetch_data(tickers, fields) -> list[dict] :
     """Fetch data for given tickers and fields."""
     data = []
@@ -34,11 +54,21 @@ def fetch_data(tickers, fields) -> list[dict] :
         data.append(row)
     return data
 
+
 def create_dataframe(data) -> pd.DataFrame:
     """Create a DataFrame from the fetched data."""
     return pd.DataFrame(data)
 
-def format_dataframe(df, pct_fields, large_num_fields):
+
+def export_to_excel(df, filename='stock_data.xlsx'):
+    """Export DataFrame to Excel file."""
+    df.to_excel(filename, index=False)
+    print(f"Data exported to {filename}")
+
+
+# view ==================
+
+def format_dataframe(df, pct_fields=get_pct_fields(), large_num_fields=get_largenum_fields()):
     """
     Format DataFrame using Pandas styling.
     
@@ -79,8 +109,3 @@ def format_dataframe(df, pct_fields, large_num_fields):
     ])
     
     return styled_df
-
-def export_to_excel(df, filename='stock_data.xlsx'):
-    """Export DataFrame to Excel file."""
-    df.to_excel(filename, index=False)
-    print(f"Data exported to {filename}")
