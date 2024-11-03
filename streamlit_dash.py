@@ -6,11 +6,11 @@ from yf_config import DEFAULT_BARRIER, DEFAULT_COUPON
 
 def display_metrics(metrics,df):
     for metric in metrics:
-            fig = px.strip(df, x=metric, hover_data=['Ticker'],title=metric)
+            fig = px.strip(df, x=metric, hover_data=['Ticker'],title=metric, color='Ticker' )
             # Customize the layout to make it very compact
             fig.update_layout(
                 height=100,  # Minimal height
-                showlegend=True,                
+                showlegend=False,                
                 yaxis={'showticklabels': True, 'showgrid': True, 'zeroline': False},
                 xaxis={'title': ''},
                 margin={'l': 40, 'r': 40, 't': 30, 'b': 20},
