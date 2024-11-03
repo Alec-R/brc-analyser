@@ -1,6 +1,10 @@
 # List of stock tickers
 SAMPLE_TICKERS = ['AAPL', 'GOOGL', 'MSFT', 'AMZN']
 
+# default inputs
+DEFAULT_BARRIER:float = 55.0
+DEFAULT_COUPON:float = 12.0
+
 # List of fields to fetch from Yahoo Finance
 FIELDS = [
     'currentPrice', # last price
