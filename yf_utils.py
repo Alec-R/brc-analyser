@@ -1,8 +1,51 @@
 import yfinance as yf
 import pandas as pd
 import yf_config
+from yf_config import DEFAULT_BARRIER, DEFAULT_COUPON
 
-# handle config ==================
+
+class DataHandler():
+    """ 
+    Handles yahoo finance data calls and transforms
+    """
+    df: pd.DataFrame
+
+    def __init__(self) -> None:
+        self.df = pd.DataFrame(fetch_data(get_tickers(),get_fields()))
+        self.df_calculations()
+
+    def df_calculations(self, input_barrier:float = DEFAULT_BARRIER , input_coupon = DEFAULT_COUPON) -> pd.DataFrame:
+        coupon = input_coupon/100
+        barrier = input_barrier/100
+        # creates a dict with all the tickers for the manual EPS input 
+
+        # inputs
+        # df.join(input_eps,on='Ticker')
+        self.df['eps_projected_manual'] = 1
+
+        ## calculations
+        # recalculate the price to earnings to check
+        self.df['trailing_calc_pe_check'] = ( (self.df['currentPrice'] / self.df['trailingEps']) != self.df['trailingPE'] )
+        # projected eps growth
+        self.df['projected_eps_growth'] = (self.df['forwardEps'] / self.df['trailingEps']  - 1 )
+        # the price at barrier level
+        self.df['price_exbarrier'] = self.df['currentPrice'] * barrier
+        # the new PE if the price is at barrier level
+        self.df['drawdown_pe'] = self.df['price_exbarrier'] / self.df['trailingEps']
+        # the new projected PE if the price is at barrier level - consensus eps projection from yfinance 
+        self.df['drawdown_pe_projected'] = self.df['price_exbarrier'] / self.df['forwardEps']
+        # the new projected PE if the price is at barrier level - manual eps input
+        self.df['drawdown_pe_projected_manual'] = self.df['price_exbarrier'] / self.df['eps_projected_manual']
+        # price to mean target percentage diff
+        self.df['price_to_targetprice'] = ( self.df['targetMeanPrice'] / self.df['currentPrice'] ) - 1
+
+        return self.df
+
+        
+
+# ==================
+# handle config 
+# ==================
 def is_valid_number(x) -> bool :
     """Check if x is a number (not 'N/A' or None)."""
     return x != 'N/A' and x is not None
@@ -23,7 +66,7 @@ def get_largenum_fields() -> list :
     """Read fields from config file."""
     return yf_config.LARGE_INTS
 
-def get_sectionfields():
+def get_sectionfields() -> dict:
     """
     Supported tabs:
     "Overview", "Fundamentals", "Forward View"
@@ -40,11 +83,13 @@ def get_sectionfields():
     }
     return fieldlist
 
-
-# data ==================
+# ==================
+# data
+# ==================
 def fetch_data(tickers, fields) -> list[dict] :
     """Fetch data for given tickers and fields."""
     data = []
+        
     for ticker in tickers:
         stock = yf.Ticker(ticker)
         stock_info = stock.info
@@ -55,18 +100,14 @@ def fetch_data(tickers, fields) -> list[dict] :
     return data
 
 
-def create_dataframe(data) -> pd.DataFrame:
-    """Create a DataFrame from the fetched data."""
-    return pd.DataFrame(data)
-
-
-def export_to_excel(df, filename='stock_data.xlsx'):
+def export_to_excel(df, filename='stock_data.xlsx') -> None:
     """Export DataFrame to Excel file."""
     df.to_excel(filename, index=False)
     print(f"Data exported to {filename}")
 
-
-# view ==================
+# ==================
+# view 
+# ==================
 
 def format_dataframe(df, pct_fields=get_pct_fields(), large_num_fields=get_largenum_fields()):
     """
